@@ -23,15 +23,19 @@ namespace EmilWallin_Miniräknare
             while (!applicationClosing)
             {
                 PrintMenu(username);
-                Console.Write("Your choice: ");
-                int choice = 99;
-                while (true)
+
+                int choice = -1;
+                while (true)                            //User input
                 {
+                    Console.Write("Your choice: ");
+
                     if (int.TryParse(Console.ReadLine(), out choice))
                         break;
+                    else
+                        Console.WriteLine("Only numeral inputs please.");
                 }
 
-                //User choice
+                //User choice switch
                 switch (choice)
                 {
                     case 1:
@@ -51,45 +55,27 @@ namespace EmilWallin_Miniräknare
             }
         }
 
-
+        #region Calculation related methods
         //Method for taking values and doing the calculation
         private static void Calculation()
         {
-            double val1 = 0;
-            double val2 = 0;
-
             PrintSeparator();
 
-            //First value
-            while (true)
-            {
-                Console.Write("Enter your first value: ");
-                if (double.TryParse(Console.ReadLine(), out val1))
-                    break;
-                else
-                    Console.WriteLine("Unable to read that value, please try again.");
-            }
-
-            //Second value
-            while (true)
-            {
-                Console.Write("Enter your second value: ");
-                if (double.TryParse(Console.ReadLine(), out val2))
-                    break;
-                else
-                    Console.WriteLine("Unable to read that value, please try again.");
-            }
+            //First and second value
+            double val1 = UserValueInput("Enter your first value: ");
+            double val2 = UserValueInput("Enter your second value: ");
+            string calculation = "";
 
             //Operator choice and calculation
             while (true)
             {
                 Console.WriteLine();
-                Console.WriteLine("Which operator do you want to use`? (+, -, *, /)");
+                Console.WriteLine("Which operator do you want to use? (+, -, *, /)");
+                Console.WriteLine("(0 to exit.)");
 
                 string operatorChoice = Console.ReadLine();
-                string calculation = "";
 
-                switch (operatorChoice)
+                switch (operatorChoice)                         //Do calculation based on choice
                 {
                     case "+":
                         calculation = $"{val1} + {val2} = {Addition(val1, val2)}";
@@ -103,18 +89,37 @@ namespace EmilWallin_Miniräknare
                     case "/":
                         calculation = $"{val1} / {val2} = {Division(val1, val2)}";
                         break;
+                    case "0":
+                        return;
                     default:
                         Console.WriteLine("Could not read that operator. Please try again!");
                         break;
                 }
-
-                Console.WriteLine(calculation);
-                calculatorHistory.Add(calculation);
-                break;
+                if (calculation != "")      //Check if calculation was made
+                    break;
             }
 
+            Console.WriteLine(calculation);
+            calculatorHistory.Add(calculation);
         }
 
+        //User input for value
+        private static double UserValueInput(string userPrompt)
+        {
+            double value;
+            while (true)
+            {
+                Console.Write(userPrompt);
+                if (double.TryParse(Console.ReadLine(), out value))
+                    break;
+                else
+                    Console.WriteLine("Unable to read that value, please try again.");
+            }
+            return value;
+        }
+        #endregion
+
+        #region Calculation History
         //Prints the calculators history
         private static void PrintHistory()
         {
@@ -130,6 +135,7 @@ namespace EmilWallin_Miniräknare
             PrintSeparator();
             Console.WriteLine();
         }
+        #endregion
 
         //Print menu
         private static void PrintMenu(string name)
@@ -149,6 +155,7 @@ namespace EmilWallin_Miniräknare
         private static void PrintSeparator()
         { Console.WriteLine("*---------------------------------------*"); }
 
+        #region MathOperations
         //Math operations
         private static double Addition(double value1, double value2) { return value1 + value2; }
         private static double Subtraction(double value1, double value2) { return value1 - value2; }
@@ -160,5 +167,6 @@ namespace EmilWallin_Miniräknare
             else
                 return 0;
         }
+        #endregion
     }
 }
